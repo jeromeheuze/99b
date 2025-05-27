@@ -1,0 +1,5 @@
+-- Delete metadata
+DELETE FROM wpwp_postmeta WHERE post_id = 64;
+
+-- Delete the product post
+DELETE FROM wpwp_posts WHERE ID = 64;
