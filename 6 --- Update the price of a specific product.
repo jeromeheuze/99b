@@ -1,0 +1,9 @@
+-- Update _regular_price
+UPDATE wpwp_postmeta
+SET meta_value = '49.99'
+WHERE post_id = 64 AND meta_key = '_regular_price';
+
+-- Update _price (used to display the current price)
+UPDATE wpwp_postmeta
+SET meta_value = '49.99'
+WHERE post_id = 64 AND meta_key = '_price';
