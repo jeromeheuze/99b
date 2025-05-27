@@ -1,0 +1,56 @@
+###### set up
+Product ID: 88
+Customer ID: 1
+Quantity: 1
+Price: $45.00
+
+INSERT INTO wpwp_posts (
+    post_type, post_status, post_title, post_name, post_date, post_date_gmt, post_modified, post_modified_gmt, post_author
+) VALUES (
+    'shop_order', 'wc-completed', 'Order &ndash; Simulated', 'order-simulated', NOW(), UTC_TIMESTAMP(), NOW(), UTC_TIMESTAMP(), 1
+);
+
+row id - 111
+
+INSERT INTO wpwp_postmeta (post_id, meta_key, meta_value) VALUES
+(111, '_customer_user', '1'),
+(111, '_order_total', '45.00'),
+(111, '_order_currency', 'USD'),
+(111, '_billing_first_name', 'Demo'),
+(111, '_billing_last_name', 'User'),
+(111, '_billing_email', 'demo@example.com'),
+(111, '_payment_method', 'cod'), -- or 'bacs', 'paypal', etc.
+(111, '_payment_method_title', 'Cash on Delivery');
+
+INSERT INTO wpwp_woocommerce_order_items (
+    order_item_name, order_item_type, order_id
+) VALUES (
+    'Sample Product', 'line_item', 111
+);
+
+Inserted row id: 1
+
+INSERT INTO wpwp_woocommerce_order_itemmeta (order_item_id, meta_key, meta_value) VALUES
+(1, '_product_id', '88'),
+(1, '_qty', '1'),
+(1, '_line_total', '45.00'),
+(1, '_line_subtotal', '45.00'),
+(1, '_line_tax', '0.00'),
+(1, '_line_subtotal_tax', '0.00');
+
+
+###### END set up
+
+SELECT 
+    MAX(CASE WHEN pm.meta_key = '_billing_first_name' THEN pm.meta_value END) AS first_name,
+    MAX(CASE WHEN pm.meta_key = '_billing_last_name' THEN pm.meta_value END) AS last_name,
+    MAX(CASE WHEN pm.meta_key = '_billing_email' THEN pm.meta_value END) AS email
+FROM 
+    wpwp_posts p
+JOIN 
+    wpwp_postmeta pm ON p.ID = pm.post_id
+WHERE 
+    p.post_type = 'shop_order'
+    AND p.post_status IN ('wc-completed', 'wc-processing', 'wc-on-hold') -- only real orders
+GROUP BY 
+    p.ID;
