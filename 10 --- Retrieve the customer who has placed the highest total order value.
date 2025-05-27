@@ -1,0 +1,18 @@
+SELECT 
+    pm2.meta_value AS customer_user_id,
+    SUM(CAST(pm.meta_value AS DECIMAL(10,2))) AS total_spent
+FROM 
+    wpwp_posts p
+JOIN 
+    wpwp_postmeta pm ON p.ID = pm.post_id AND pm.meta_key = '_order_total'
+JOIN 
+    wpwp_postmeta pm2 ON p.ID = pm2.post_id AND pm2.meta_key = '_customer_user'
+WHERE 
+    p.post_type = 'shop_order'
+    AND p.post_status IN ('wc-completed', 'wc-processing', 'wc-on-hold')
+    AND pm2.meta_value != '0'  -- skip guest orders
+GROUP BY 
+    pm2.meta_value
+ORDER BY 
+    total_spent DESC
+LIMIT 1;
