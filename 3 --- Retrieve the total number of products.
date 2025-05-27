@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM wpwp_posts p WHERE p.post_type IN ('product', 'product_variation') AND p.post_status = 'publish';
